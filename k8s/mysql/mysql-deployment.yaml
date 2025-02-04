@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "1234"
+            - name: MYSQL_DATABASE
+              value: "dating"
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+          livenessProbe:
+            exec:
+              command:
+                - mysqladmin
+                - ping
+                - -h
+                - localhost
+            initialDelaySeconds: 10
+            periodSeconds: 30
+      volumes:
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: mysql-pvc

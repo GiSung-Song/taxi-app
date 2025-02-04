@@ -1,0 +1,10 @@
+rootProject.name = 'taxi-app'
+
+include 'common'
+include 'config-server'
+include 'driver-service'
+include 'gateway'
+include 'notification-service'
+include 'payment-service'
+include 'ride-service'
+include 'user-service'
