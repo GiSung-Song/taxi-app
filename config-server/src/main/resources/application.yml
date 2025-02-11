@@ -1,0 +1,27 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/GiSung-Song/taxi-app-config.git # ?? ?? ?? git repo
+          default-label: main # ?? ???
+          clone-on-start: true # ?? ?? ? ?? ?? ??
+          skip-ssl-validation: true # HTTPS ?? ?? ??
+          force-pull: true # ?? ?? ?? ????
+          timeout: 5 # Git Repository ?? ???? (?)
+    refresh:
+      enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,refresh"
+  endpoint:
+    health:
+      show-details: always

@@ -8,3 +8,14 @@ include 'notification-service'
 include 'payment-service'
 include 'ride-service'
 include 'user-service'
+include 'eureka-server'
+
+project(':common').projectDir = file('common')
+project(':config-server').projectDir = file('config-server')
+project(':driver-service').projectDir = file('driver-service')
+project(':gateway').projectDir = file('gateway')
+project(':notification-service').projectDir = file('notification-service')
+project(':payment-service').projectDir = file('payment-service')
+project(':ride-service').projectDir = file('ride-service')
+project(':user-service').projectDir = file('user-service')
+project(':eureka-server').projectDir = file('eureka-server')
