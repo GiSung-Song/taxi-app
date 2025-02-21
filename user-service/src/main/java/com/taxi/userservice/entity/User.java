@@ -41,6 +41,9 @@ public class User {
     @Column(nullable = false, length = 10)
     private Provider provider;
 
+    @Column
+    private String providerId;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -48,4 +51,12 @@ public class User {
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    public void updatePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 }

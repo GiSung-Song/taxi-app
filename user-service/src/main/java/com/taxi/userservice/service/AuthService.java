@@ -8,6 +8,7 @@ import com.taxi.userservice.dto.LoginRequestDto;
 import com.taxi.userservice.dto.TokenDto;
 import com.taxi.userservice.entity.User;
 import com.taxi.userservice.enums.Provider;
+import com.taxi.userservice.enums.Role;
 import com.taxi.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,15 +51,7 @@ public class AuthService {
             throw new CustomBadRequestException("잘못된 비밀번호입니다.");
         }
 
-        String accessToken = jwtTokenUtil.generateAccessToken(user.getEmail(), user.getRole().name());
-        String refreshToken = jwtTokenUtil.generateRefreshToken(user.getEmail());
-
-        Date expirationDate = jwtTokenUtil.getTokenExpiration(refreshToken);
-        long expiration = expirationDate.getTime() - System.currentTimeMillis();
-
-        redisTemplate.opsForValue().set(user.getEmail(), refreshToken, expiration, TimeUnit.MILLISECONDS);
-
-        return new TokenDto(accessToken, refreshToken);
+        return getAccessRefreshToken(user.getEmail(), user.getRole());
     }
 
     // 로그아웃
@@ -98,5 +91,28 @@ public class AuthService {
         tokenDto.setAccessToken(newAccessToken);
 
         return tokenDto;
+    }
+
+    // OAuth2 회원 로그인
+    public TokenDto oAuth2Login(String email, Role role) {
+        return getAccessRefreshToken(email, role);
+    }
+
+    // 회원 반환
+    public User getUser(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    // AccessToken, RefreshToken 발급
+    private TokenDto getAccessRefreshToken(String email, Role role) {
+        String accessToken = jwtTokenUtil.generateAccessToken(email, role.name());
+        String refreshToken = jwtTokenUtil.generateRefreshToken(email);
+
+        Date expirationDate = jwtTokenUtil.getTokenExpiration(refreshToken);
+        long expiration = expirationDate.getTime() - System.currentTimeMillis();
+
+        redisTemplate.opsForValue().set(email, refreshToken, expiration, TimeUnit.MILLISECONDS);
+
+        return new TokenDto(accessToken, refreshToken);
     }
 }

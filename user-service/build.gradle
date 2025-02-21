@@ -23,7 +23,11 @@ dependencyManagement {
 dependencies {
     implementation project(':common')
 
+    // web
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // oauth2
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
     // security
     implementation 'org.springframework.boot:spring-boot-starter-security'
