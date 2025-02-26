@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@ActiveProfiles("test")
+@ActiveProfiles("h2")
 class UserServiceTest {
 
     @InjectMocks

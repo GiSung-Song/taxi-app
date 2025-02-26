@@ -1,17 +1,35 @@
 spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
   config:
     activate:
       on-profile: test
 
   datasource:
-    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;DATABASE_TO_UPPER=false;MODE=MySQL
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-  h2:
-    console:
-      enabled: true
+    url: jdbc:tc:mysql://localhost:3306/testdb
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    username: root
+    password: password
+
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+jwt:
+  secretKey: fdsa89fdsa7f789ewq879fsadsa98ds69af68y94e2fgh89q1
+  access:
+    expiration: 60000 # 만료시간 1분
+
+  refresh:
+    expiration: 120000 # 만료시간 2분
+
+eureka:
+  client:
+    enabled: false

@@ -35,6 +35,8 @@ dependencies {
     // eureka
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
     // config
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
     implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'

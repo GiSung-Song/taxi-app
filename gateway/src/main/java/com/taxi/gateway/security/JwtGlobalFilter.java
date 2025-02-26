@@ -33,7 +33,7 @@ public class JwtGlobalFilter implements GlobalFilter, Ordered {
     private final List<String> excludeUrls = List.of(
             "/api/user/register",           // 일반 회원가입
             "/api/user/oauth/register",     // SNS 회원가입
-            "/api/user/login",              // 일반 로그인
+            "/api/auth/login",              // 일반 로그인
             "/api/auth/logout",             // 로그아웃
             "/api/auth/refresh",            // 토큰 재발급
             "/oauth2/authorization/kakao",  // 카카오 로그인 시작

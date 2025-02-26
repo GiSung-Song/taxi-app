@@ -1,6 +1,7 @@
 package com.taxi.userservice.config;
 
 import com.taxi.common.security.JwtTokenFilter;
+import com.taxi.common.security.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +22,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtTokenFilter jwtTokenFilter;
+    private final JwtTokenUtil jwtTokenUtil;
+
+    @Bean
+    public JwtTokenFilter jwtTokenFilter() {
+        return new JwtTokenFilter(jwtTokenUtil);
+    }
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -29,7 +35,7 @@ public class SecurityConfig {
                 .requestMatchers(
                         "/api/user/register",  // 일반 회원가입
                         "/api/user/oauth/register",     // SNS 회원가입
-                        "/api/user/login",              // 일반 로그인
+                        "/api/auth/login",              // 일반 로그인
                         "/api/auth/logout",             // 로그아웃
                         "/api/auth/refresh",            // 토큰 재발급
                         "/oauth2/authorization/kakao",  // 카카오 로그인 시작
@@ -55,7 +61,7 @@ public class SecurityConfig {
                 .formLogin(FormLoginConfigurer::disable)
                 .sessionManagement((session) ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }
