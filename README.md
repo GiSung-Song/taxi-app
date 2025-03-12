@@ -6,7 +6,7 @@
 - Messaging : Kafka (알림 서비스 예정)
 - Security : Spring Security, OAuth2, JWT
 
----
+
 
 ## 프로젝트 흐름
 1. **회원 가입**
@@ -27,7 +27,7 @@
    - 호출 수락, 취소, 완료 처리
    - 승객과 기사에게 필요 내용 알림 (kafka, 'notification-service' 예정)
 
----
+
 
 ## 모듈별 역할
 - common : 공통 모듈 (예외처리, JWT, 응답처리 등)
@@ -37,5 +37,3 @@
 - notification-service : 알림 서비스 (kafka 기반) - 예정
 - ride-service : 택시 호출 및 운행 관리 서비스
 - user-service : 회원 서비스 (회원가입, 로그인 등)
-
----
