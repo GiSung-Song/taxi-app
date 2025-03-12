@@ -1,5 +1,6 @@
 package com.taxi.userservice.controller;
 
+import com.taxi.common.dto.UserDto;
 import com.taxi.common.exception.CustomAuthException;
 import com.taxi.common.response.CustomResponse;
 import com.taxi.common.response.ResponseCode;
@@ -84,5 +85,13 @@ public class AuthController {
         TokenDto tokenDto = authService.reIssueAccessToken(refreshToken);
 
         return ResponseEntity.ok(CustomResponse.success(tokenDto, ResponseCode.SUCCESS));
+    }
+
+    // feign client user 정보 반환
+    @GetMapping("/{email}")
+    public UserDto findUserIdByEmail(@PathVariable("email") String email) {
+        User user = authService.getUser(email);
+
+        return new UserDto(user.getId(), user.getName(), user.getPhoneNumber());
     }
 }

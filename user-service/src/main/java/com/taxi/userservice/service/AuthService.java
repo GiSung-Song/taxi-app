@@ -1,5 +1,6 @@
 package com.taxi.userservice.service;
 
+import com.taxi.common.dto.UserDto;
 import com.taxi.common.exception.CustomAuthException;
 import com.taxi.common.exception.CustomBadRequestException;
 import com.taxi.common.exception.CustomInternalException;
@@ -100,7 +101,13 @@ public class AuthService {
 
     // 회원 반환
     public User getUser(String email) {
-        return userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email);
+
+        if (user == null) {
+            throw new CustomBadRequestException("잘못된 이메일입니다.");
+        }
+
+        return user;
     }
 
     // AccessToken, RefreshToken 발급
