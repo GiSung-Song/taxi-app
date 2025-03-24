@@ -1,6 +1,7 @@
 package com.taxi.rideservice.service;
 
 import com.taxi.common.dto.UserDto;
+import com.taxi.common.exception.CustomBadRequestException;
 import com.taxi.rideservice.client.UserServiceClient;
 import com.taxi.rideservice.dto.DriverRegisterDto;
 import com.taxi.rideservice.dto.DriverStatusUpdateDto;
@@ -8,13 +9,10 @@ import com.taxi.rideservice.dto.DriverUpdateDto;
 import com.taxi.rideservice.entity.Driver;
 import com.taxi.rideservice.enums.DriverStatus;
 import com.taxi.rideservice.repository.DriverRepository;
-import com.taxi.common.exception.CustomBadRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor

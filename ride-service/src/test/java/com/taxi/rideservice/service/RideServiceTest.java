@@ -175,7 +175,6 @@ class RideServiceTest {
 
         Driver driver = Driver.builder()
                 .userId(0L)
-                .userId(1L)
                 .driverStatus(DriverStatus.WAITING)
                 .build();
 

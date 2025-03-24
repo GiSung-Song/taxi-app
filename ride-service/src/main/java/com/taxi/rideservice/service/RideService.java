@@ -85,7 +85,7 @@ public class RideService {
 
     // 택시 호출 수락
     @Transactional
-    public void acceptCall(CallAcceptRequestDto dto) {
+    public RideInfoDto acceptCall(CallAcceptRequestDto dto) {
         try {
             String jsonData = redisTemplate.opsForValue().get(DETAIL_KEY_PREFIX + dto.getPassengerEmail());
             RideCallRequestDto rideCallRequestDto = objectMapper.readValue(jsonData, RideCallRequestDto.class);
@@ -157,6 +157,7 @@ public class RideService {
             rideInfo.setCapacity(driver.getCapacity());
             rideInfo.setTotalRides(driver.getTotalRides());
 
+            return rideInfo;
         } catch (CustomBadRequestException e) {
             throw e;
         } catch (Exception e) {
@@ -166,7 +167,7 @@ public class RideService {
 
     }
 
-    // 운행 취소
+    // 운행 호출 취소
     @Transactional
     public void cancelRide(Long rideId) {
         Ride ride = getRide(rideId);
@@ -192,6 +193,10 @@ public class RideService {
         Driver driver = getDriver(ride.getDriverId());
 
         // 운행 중으로 상태 변경
+        if (!RideStatus.ACCEPT.equals(ride.getRideStatus()) || !DriverStatus.RESERVATION.equals(driver.getDriverStatus())) {
+            throw new CustomBadRequestException("운행 시작을 할 수 없는 상태입니다.");
+        }
+
         ride.updateRideStatus(RideStatus.DRIVING);
 
         // 운행 중으로 상태 변경
@@ -205,6 +210,10 @@ public class RideService {
         Driver driver = getDriver(ride.getDriverId());
 
         // 요금 추가 및 운행 상태 변경
+        if (!RideStatus.DRIVING.equals(ride.getRideStatus()) || !DriverStatus.DRIVING.equals(driver.getDriverStatus())) {
+            throw new CustomBadRequestException("운행 완료를 할 수 없는 상태입니다.");
+        }
+
         ride.completeRide(dto.getFare());
 
         // 기사 상태 변경 (운행횟수 +1, 운행상태 wait)

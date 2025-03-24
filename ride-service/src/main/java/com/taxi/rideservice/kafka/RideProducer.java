@@ -25,6 +25,8 @@ public class RideProducer {
         try {
             String rideRequestJson = objectMapper.writeValueAsString(dto);
             kafkaTemplate.send(TOPIC, rideRequestJson);
+
+            log.info("Success To Send : {}", rideRequestJson);
         } catch (JsonProcessingException e) {
             log.error("데이터 변환 중 내부적인 오류가 발생 : {}", e.getMessage());
             throw new CustomInternalException("데이터 변환 중 내부적인 오류가 발생하였습니다.");
