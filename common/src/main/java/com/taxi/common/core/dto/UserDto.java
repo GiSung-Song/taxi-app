@@ -1,4 +1,4 @@
-package com.taxi.common.dto;
+package com.taxi.common.core.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

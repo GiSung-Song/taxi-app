@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-@SpringBootApplication(scanBasePackages = {"com.taxi.common", "com.taxi.rideservice"})
+@SpringBootApplication(scanBasePackages = {"com.taxi.common.core", "com.taxi.rideservice"})
 @EnableFeignClients
 public class RideServiceApplication {
 

@@ -1,7 +1,7 @@
 package com.taxi.rideservice.controller;
 
-import com.taxi.common.response.CustomResponse;
-import com.taxi.common.response.ResponseCode;
+import com.taxi.common.core.response.CustomResponse;
+import com.taxi.common.core.response.ResponseCode;
 import com.taxi.rideservice.dto.*;
 import com.taxi.rideservice.kafka.RideProducer;
 import com.taxi.rideservice.service.RideService;

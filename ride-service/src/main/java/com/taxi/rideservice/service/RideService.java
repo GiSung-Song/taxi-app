@@ -1,9 +1,9 @@
 package com.taxi.rideservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.taxi.common.dto.UserDto;
-import com.taxi.common.exception.CustomBadRequestException;
-import com.taxi.common.exception.CustomInternalException;
+import com.taxi.common.core.dto.UserDto;
+import com.taxi.common.core.exception.CustomBadRequestException;
+import com.taxi.common.core.exception.CustomInternalException;
 import com.taxi.rideservice.client.UserServiceClient;
 import com.taxi.rideservice.dto.*;
 import com.taxi.rideservice.entity.Driver;
@@ -43,6 +43,8 @@ public class RideService {
     public void saveCallRequest(RideCallRequestDto dto) {
         try {
             // Geo 정보 저장
+            log.info("longitude : {}, latitude : {}", dto.getStartLongitude(), dto.getStartLatitude());
+
             redisTemplate.opsForGeo().add(GEO_KEY,
                     new Point(dto.getStartLongitude(), dto.getStartLatitude()),
                     dto.getPassengerEmail());

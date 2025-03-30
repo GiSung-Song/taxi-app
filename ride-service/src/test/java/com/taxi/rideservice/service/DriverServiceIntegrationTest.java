@@ -1,7 +1,7 @@
 package com.taxi.rideservice.service;
 
-import com.taxi.common.dto.UserDto;
-import com.taxi.common.exception.CustomBadRequestException;
+import com.taxi.common.core.dto.UserDto;
+import com.taxi.common.core.exception.CustomBadRequestException;
 import com.taxi.rideservice.client.UserServiceClient;
 import com.taxi.rideservice.config.TestContainerConfig;
 import com.taxi.rideservice.dto.DriverRegisterDto;

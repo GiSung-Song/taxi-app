@@ -1,9 +1,9 @@
 package com.taxi.userservice.controller;
 
-import com.taxi.common.dto.UserDto;
-import com.taxi.common.exception.CustomAuthException;
-import com.taxi.common.response.CustomResponse;
-import com.taxi.common.response.ResponseCode;
+import com.taxi.common.core.dto.UserDto;
+import com.taxi.common.core.exception.CustomAuthException;
+import com.taxi.common.core.response.CustomResponse;
+import com.taxi.common.core.response.ResponseCode;
 import com.taxi.userservice.dto.LoginRequestDto;
 import com.taxi.userservice.dto.OAuthResponseDto;
 import com.taxi.userservice.dto.TokenDto;

@@ -1,7 +1,7 @@
 package com.taxi.userservice.service;
 
-import com.taxi.common.exception.CustomAuthException;
-import com.taxi.common.exception.CustomBadRequestException;
+import com.taxi.common.core.exception.CustomAuthException;
+import com.taxi.common.core.exception.CustomBadRequestException;
 import com.taxi.userservice.dto.*;
 import com.taxi.userservice.entity.User;
 import com.taxi.userservice.enums.Provider;

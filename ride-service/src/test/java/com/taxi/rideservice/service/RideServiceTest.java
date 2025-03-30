@@ -2,9 +2,9 @@ package com.taxi.rideservice.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.taxi.common.dto.UserDto;
-import com.taxi.common.exception.CustomBadRequestException;
-import com.taxi.common.exception.CustomInternalException;
+import com.taxi.common.core.dto.UserDto;
+import com.taxi.common.core.exception.CustomBadRequestException;
+import com.taxi.common.core.exception.CustomInternalException;
 import com.taxi.rideservice.client.UserServiceClient;
 import com.taxi.rideservice.dto.*;
 import com.taxi.rideservice.entity.Driver;

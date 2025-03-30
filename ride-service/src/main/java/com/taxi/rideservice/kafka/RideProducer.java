@@ -2,7 +2,7 @@ package com.taxi.rideservice.kafka;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.taxi.common.exception.CustomInternalException;
+import com.taxi.common.core.exception.CustomInternalException;
 import com.taxi.rideservice.dto.RideCallRequestDto;
 import com.taxi.rideservice.dto.RideInfoDto;
 import com.taxi.rideservice.service.RideService;

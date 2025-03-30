@@ -1,4 +1,4 @@
-package com.taxi.common.valid;
+package com.taxi.common.core.valid;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

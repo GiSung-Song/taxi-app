@@ -1,7 +1,7 @@
 package com.taxi.userservice.controller;
 
-import com.taxi.common.response.CustomResponse;
-import com.taxi.common.response.ResponseCode;
+import com.taxi.common.core.response.CustomResponse;
+import com.taxi.common.core.response.ResponseCode;
 import com.taxi.userservice.dto.*;
 import com.taxi.userservice.service.UserService;
 import jakarta.validation.Valid;

@@ -1,4 +1,4 @@
-package com.taxi.common.exception;
+package com.taxi.common.core.exception;
 
 public class CustomInternalException extends RuntimeException {
 

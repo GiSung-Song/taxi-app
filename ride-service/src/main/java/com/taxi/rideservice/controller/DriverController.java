@@ -1,7 +1,7 @@
 package com.taxi.rideservice.controller;
 
-import com.taxi.common.response.CustomResponse;
-import com.taxi.common.response.ResponseCode;
+import com.taxi.common.core.response.CustomResponse;
+import com.taxi.common.core.response.ResponseCode;
 import com.taxi.rideservice.dto.DriverRegisterDto;
 import com.taxi.rideservice.dto.DriverStatusUpdateDto;
 import com.taxi.rideservice.dto.DriverUpdateDto;

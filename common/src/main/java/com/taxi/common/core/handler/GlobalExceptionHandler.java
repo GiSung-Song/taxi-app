@@ -1,8 +1,8 @@
-package com.taxi.common.handler;
+package com.taxi.common.core.handler;
 
-import com.taxi.common.exception.CustomAuthException;
-import com.taxi.common.exception.CustomBadRequestException;
-import com.taxi.common.exception.CustomInternalException;
+import com.taxi.common.core.exception.CustomAuthException;
+import com.taxi.common.core.exception.CustomBadRequestException;
+import com.taxi.common.core.exception.CustomInternalException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

@@ -1,7 +1,7 @@
 package com.taxi.rideservice.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.taxi.common.exception.CustomInternalException;
+import com.taxi.common.core.exception.CustomInternalException;
 import com.taxi.rideservice.dto.RideCallRequestDto;
 import com.taxi.rideservice.service.RideService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class RideConsumer {
     private final RideService rideService;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "ride-request")
+    @KafkaListener(topics = "ride-request", groupId = "taxi-consumer-group")
     public void consumeRideRequest(String message) {
         try {
             log.info("Received Message : {}", message);

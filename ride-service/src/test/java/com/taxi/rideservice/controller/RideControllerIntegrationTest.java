@@ -1,8 +1,7 @@
 package com.taxi.rideservice.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.taxi.common.dto.UserDto;
+import com.taxi.common.core.dto.UserDto;
 import com.taxi.rideservice.client.UserServiceClient;
 import com.taxi.rideservice.config.KafkaContainerConfig;
 import com.taxi.rideservice.config.TestContainerConfig;

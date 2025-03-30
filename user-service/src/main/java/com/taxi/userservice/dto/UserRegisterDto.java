@@ -1,6 +1,6 @@
 package com.taxi.userservice.dto;
 
-import com.taxi.common.valid.ValidEnum;
+import com.taxi.common.core.valid.ValidEnum;
 import com.taxi.userservice.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

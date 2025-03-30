@@ -1,8 +1,7 @@
 package com.taxi.rideservice.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.taxi.common.dto.UserDto;
+import com.taxi.common.core.dto.UserDto;
 import com.taxi.rideservice.client.UserServiceClient;
 import com.taxi.rideservice.config.TestContainerConfig;
 import com.taxi.rideservice.dto.DriverRegisterDto;
@@ -12,7 +11,6 @@ import com.taxi.rideservice.entity.Driver;
 import com.taxi.rideservice.enums.DriverStatus;
 import com.taxi.rideservice.repository.DriverRepository;
 import com.taxi.rideservice.service.DriverService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

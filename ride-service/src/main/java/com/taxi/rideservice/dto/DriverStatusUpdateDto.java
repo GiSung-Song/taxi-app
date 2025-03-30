@@ -1,7 +1,7 @@
 package com.taxi.rideservice.dto;
 
 import com.taxi.rideservice.enums.DriverStatus;
-import com.taxi.common.valid.ValidEnum;
+import com.taxi.common.core.valid.ValidEnum;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

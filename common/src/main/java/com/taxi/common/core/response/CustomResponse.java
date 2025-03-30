@@ -1,4 +1,4 @@
-package com.taxi.common.response;
+package com.taxi.common.core.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
