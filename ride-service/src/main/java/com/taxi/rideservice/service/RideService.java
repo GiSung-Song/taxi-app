@@ -1,7 +1,7 @@
 package com.taxi.rideservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.taxi.common.core.dto.UserDto;
+import com.taxi.common.core.dto.*;
 import com.taxi.common.core.exception.CustomBadRequestException;
 import com.taxi.common.core.exception.CustomInternalException;
 import com.taxi.rideservice.client.UserServiceClient;
@@ -87,7 +87,7 @@ public class RideService {
 
     // 택시 호출 수락
     @Transactional
-    public RideInfoDto acceptCall(CallAcceptRequestDto dto) {
+    public RideAcceptDto acceptCall(CallAcceptRequestDto dto) {
         try {
             String jsonData = redisTemplate.opsForValue().get(DETAIL_KEY_PREFIX + dto.getPassengerEmail());
             RideCallRequestDto rideCallRequestDto = objectMapper.readValue(jsonData, RideCallRequestDto.class);
@@ -139,27 +139,29 @@ public class RideService {
             redisTemplate.opsForGeo().remove(GEO_KEY, dto.getPassengerEmail());
 
             // kafka로 전송할 데이터 반환
-            RideInfoDto rideInfo = new RideInfoDto();
+            RideAcceptDto rideAcceptDto = new RideAcceptDto();
 
-            rideInfo.setRideId(ride.getId());
+            rideAcceptDto.setRideId(ride.getId());
 
-            // 기사가 확인할 정보 (이름, 전화번호, 출발지, 목적지)
-            rideInfo.setPassengerUserId(passengerInfo.getUserId());
-            rideInfo.setPassengerName(passengerInfo.getName());
-            rideInfo.setPassengerPhoneNumber(passengerInfo.getPhoneNumber());
-            rideInfo.setStartLocation(rideCallRequestDto.getStartLocation());
-            rideInfo.setEndLocation(rideCallRequestDto.getEndLocation());
+            // 기사가 확인할 정보 (전화번호, 출발지, 목적지)
+            rideAcceptDto.setPassengerUserId(passengerInfo.getUserId());
+            rideAcceptDto.setPassengerPhoneNumber(passengerInfo.getPhoneNumber());
+            rideAcceptDto.setStartLocation(rideCallRequestDto.getStartLocation());
+            rideAcceptDto.setEndLocation(rideCallRequestDto.getEndLocation());
 
-            // 승객이 확인할 정보 (
-            rideInfo.setDriverUserId(driverInfo.getUserId());
-            rideInfo.setDriverName(driverInfo.getName());
-            rideInfo.setDriverPhoneNumber(driver.getPhoneNumber());
-            rideInfo.setCarName(driver.getCarName());
-            rideInfo.setCarNumber(driver.getCarNumber());
-            rideInfo.setCapacity(driver.getCapacity());
-            rideInfo.setTotalRides(driver.getTotalRides());
+            // 승객이 확인할 정보 (기사 이름, 기사 전화번호, 차 번호, 차 종류)
+            rideAcceptDto.setDriverUserId(driverInfo.getUserId());
+            rideAcceptDto.setDriverName(driverInfo.getName());
+            rideAcceptDto.setDriverPhoneNumber(driver.getPhoneNumber());
+            rideAcceptDto.setCarName(driver.getCarName());
+            rideAcceptDto.setCarNumber(driver.getCarNumber());
+            rideAcceptDto.setCapacity(driver.getCapacity());
+            rideAcceptDto.setTotalRides(driver.getTotalRides());
 
-            return rideInfo;
+            rideAcceptDto.setRideStatus(RideStatus.ACCEPT.name());
+            rideAcceptDto.setAcceptTime(ride.getCreatedAt());
+
+            return rideAcceptDto;
         } catch (CustomBadRequestException e) {
             throw e;
         } catch (Exception e) {
@@ -171,7 +173,7 @@ public class RideService {
 
     // 운행 호출 취소
     @Transactional
-    public void cancelRide(Long rideId) {
+    public RideCancelDto cancelRide(Long rideId) {
         Ride ride = getRide(rideId);
         Driver driver = getDriver(ride.getDriverId());
 
@@ -186,11 +188,23 @@ public class RideService {
 
         // 운행 대기상태로 변경
         driver.updateDriverStatus(DriverStatus.WAITING);
+
+        UserDto driverInfo = userServiceClient.getUserInfoById(driver.getUserId());
+
+        // dto 설정
+        RideCancelDto rideCancelDto = new RideCancelDto();
+
+        rideCancelDto.setDriverUserId(driverInfo.getUserId());
+        rideCancelDto.setRideId(rideId);
+        rideCancelDto.setCancelTime(ride.getUpdatedAt());
+        rideCancelDto.setRideStatus(RideStatus.CANCEL.name());
+
+        return rideCancelDto;
     }
 
     // 운행 시작
     @Transactional
-    public void startRide(Long rideId) {
+    public RideStartDto startRide(Long rideId) {
         Ride ride = getRide(rideId);
         Driver driver = getDriver(ride.getDriverId());
 
@@ -199,15 +213,36 @@ public class RideService {
             throw new CustomBadRequestException("운행 시작을 할 수 없는 상태입니다.");
         }
 
-        ride.updateRideStatus(RideStatus.DRIVING);
-
         // 운행 중으로 상태 변경
+        ride.updateRideStatus(RideStatus.DRIVING);
         driver.updateDriverStatus(DriverStatus.DRIVING);
+
+        // driver, passenger 정보 조회
+        UserDto passengerInfo = userServiceClient.getUserInfoById(ride.getPassengerId());
+        UserDto driverInfo = userServiceClient.getUserInfoById(driver.getUserId());
+
+        RideStartDto rideStartDto = new RideStartDto();
+
+        rideStartDto.setRideId(rideId);
+
+        rideStartDto.setPassengerPhoneNumber(passengerInfo.getPhoneNumber());
+
+        rideStartDto.setDriverName(driverInfo.getName());
+        rideStartDto.setDriverPhoneNumber(driverInfo.getPhoneNumber());
+        rideStartDto.setCarName(driver.getCarName());
+        rideStartDto.setCarNumber(driver.getCarNumber());
+
+        rideStartDto.setStartLocation(ride.getStartLocation());
+        rideStartDto.setEndLocation(ride.getEndLocation());
+        rideStartDto.setRideStatus(RideStatus.DRIVING.name());
+        rideStartDto.setStartTime(ride.getUpdatedAt());
+
+        return rideStartDto;
     }
 
     // 운행 완료
     @Transactional
-    public void completeRide(RideCompleteDto dto) {
+    public DriveCompleteDto completeRide(RideCompleteDto dto) {
         Ride ride = getRide(dto.getRideId());
         Driver driver = getDriver(ride.getDriverId());
 
@@ -220,25 +255,71 @@ public class RideService {
 
         // 기사 상태 변경 (운행횟수 +1, 운행상태 wait)
         driver.finishRide();
+
+        // driver, passenger 정보 조회
+        UserDto passengerInfo = userServiceClient.getUserInfoById(ride.getPassengerId());
+        UserDto driverInfo = userServiceClient.getUserInfoById(driver.getUserId());
+
+        DriveCompleteDto driveCompleteDto = new DriveCompleteDto();
+
+        driveCompleteDto.setRideId(ride.getId());
+
+        driveCompleteDto.setPassengerPhoneNumber(passengerInfo.getPhoneNumber());
+
+        driveCompleteDto.setDriverName(driverInfo.getName());
+        driveCompleteDto.setDriverPhoneNumber(driver.getPhoneNumber());
+        driveCompleteDto.setCarName(driver.getCarName());
+        driveCompleteDto.setCarNumber(driver.getCarNumber());
+
+        driveCompleteDto.setFare(ride.getFare());
+        driveCompleteDto.setStartLocation(ride.getStartLocation());
+        driveCompleteDto.setEndLocation(ride.getEndLocation());
+        driveCompleteDto.setRideStatus(RideStatus.COMPLETE.name());
+        driveCompleteDto.setCompleteTime(ride.getUpdatedAt());
+
+        return driveCompleteDto;
     }
 
     // 롤백
     @Transactional
-    public void rollBackRide(RideInfoDto rideInfoDto) {
-        Ride ride = rideRepository.findById(rideInfoDto.getRideId())
+    public void rollBackRide(RollBackDto rollBackDto) {
+        Ride ride = rideRepository.findById(rollBackDto.getRideId())
                 .orElse(null);
 
         if (ride != null) {
             rideRepository.delete(ride);
         }
 
-        Driver driver = driverRepository.findByUserId(rideInfoDto.getDriverUserId());
+        Driver driver = driverRepository.findByUserId(rollBackDto.getDriverUserId());
 
         if (driver == null) {
             throw new CustomInternalException("해당 기사가 없습니다.");
         }
 
         driver.updateDriverStatus(DriverStatus.WAITING);
+    }
+
+    // 운행 시작 메서드 실패 시 강제 시작
+    // kafka 보상 메서드
+    public void rollBackStartRide(RideStartDto rideStartDto) {
+        Ride ride = getRide(rideStartDto.getRideId());
+        Driver driver = getDriver(ride.getDriverId());
+
+        // 운행 중으로 상태 강제 변경
+        ride.updateRideStatus(RideStatus.DRIVING);
+        driver.updateDriverStatus(DriverStatus.DRIVING);
+    }
+
+    // 운행 종료 메서드 실패 시 강제 종료
+    // kafka 보상 메서드
+    public void rollBackCompleteRide(RideCompleteDto rideCompleteDto) {
+        Ride ride = getRide(rideCompleteDto.getRideId());
+        Driver driver = getDriver(ride.getDriverId());
+
+        ride.completeRide(rideCompleteDto.getFare());
+
+        // 기사 상태 변경 (운행횟수 +1, 운행상태 wait)
+        driver.finishRide();
     }
 
     private Driver getDriver(Long driverId) {

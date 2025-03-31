@@ -19,7 +19,7 @@ public class Driver {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private Long userId;
 
     @Column(nullable = false, length = 10)
@@ -31,10 +31,10 @@ public class Driver {
     @Column(nullable = false, length = 50)
     private String carName;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 30, unique = true)
     private String license;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 20, unique = true)
     private String phoneNumber;
 
     @Column(nullable = false)

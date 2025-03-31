@@ -1,6 +1,7 @@
 package com.taxi.rideservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taxi.common.core.dto.RideAcceptDto;
 import com.taxi.common.core.dto.UserDto;
 import com.taxi.rideservice.client.UserServiceClient;
 import com.taxi.rideservice.config.KafkaContainerConfig;
@@ -244,8 +245,7 @@ public class RideControllerIntegrationTest {
         ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(10));
 
         for (ConsumerRecord<String, String> record : records) {
-            RideInfoDto acceptDto = objectMapper.readValue(record.value(), RideInfoDto.class);
-            assertEquals("passenger", acceptDto.getPassengerName());
+            RideAcceptDto acceptDto = objectMapper.readValue(record.value(), RideAcceptDto.class);
             assertEquals("driver", acceptDto.getDriverName());
             assertEquals("startLocation", acceptDto.getStartLocation());
             assertEquals("endLocation", acceptDto.getEndLocation());

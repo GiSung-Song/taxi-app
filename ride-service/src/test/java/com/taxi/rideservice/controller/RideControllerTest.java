@@ -2,6 +2,7 @@ package com.taxi.rideservice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taxi.common.core.dto.RideAcceptDto;
 import com.taxi.rideservice.dto.*;
 import com.taxi.rideservice.kafka.RideProducer;
 import com.taxi.rideservice.service.RideService;
@@ -117,7 +118,7 @@ class RideControllerTest {
         callAcceptRequestDto.setDriverEmail("driver@email.com");
         callAcceptRequestDto.setPassengerEmail("passenger@email.com");
 
-        RideInfoDto rideInfoDto = new RideInfoDto();
+        RideAcceptDto rideInfoDto = new RideAcceptDto();
 
         rideInfoDto.setRideId(0L);
         rideInfoDto.setPassengerUserId(1L);
@@ -134,7 +135,7 @@ class RideControllerTest {
         rideInfoDto.setTotalRides(50);
 
         given(rideService.acceptCall(any())).willReturn(rideInfoDto);
-        willDoNothing().given(rideProducer).sendRideInfo(rideInfoDto);
+        willDoNothing().given(rideProducer).sendRideAccept(rideInfoDto);
 
         mockMvc.perform(post("/api/ride/accept")
                 .contentType(MediaType.APPLICATION_JSON)

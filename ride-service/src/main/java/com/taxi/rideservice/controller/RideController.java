@@ -37,7 +37,7 @@ public class RideController {
     @PostMapping("/accept")
     public ResponseEntity<CustomResponse<?>> acceptCall(@RequestBody @Valid CallAcceptRequestDto dto) {
         RideInfoDto rideInfoDto = rideService.acceptCall(dto);
-        rideProducer.sendRideInfo(rideInfoDto);
+        rideProducer.sendRideAccept(rideInfoDto);
 
         return ResponseEntity.ok(CustomResponse.success(null, ResponseCode.SUCCESS));
     }

@@ -353,7 +353,7 @@ class RideServiceTest {
         when(rideRepository.findById(anyLong())).thenReturn(Optional.of(ride));
         when(driverRepository.findByUserId(anyLong())).thenReturn(driver);
 
-        RideInfoDto dto = new RideInfoDto();
+        RollBackDto dto = new RollBackDto();
         dto.setRideId(0L);
         dto.setDriverUserId(1L);
 

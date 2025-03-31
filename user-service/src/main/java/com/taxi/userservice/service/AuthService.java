@@ -99,7 +99,7 @@ public class AuthService {
     }
 
     // 회원 반환
-    public User getUser(String email) {
+    public User getUserByEmail(String email) {
         User user = userRepository.findByEmail(email);
 
         if (user == null) {
@@ -107,6 +107,12 @@ public class AuthService {
         }
 
         return user;
+    }
+
+    // 회원 반환
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new CustomBadRequestException("잘못된 USER ID 입니다."));
     }
 
     // AccessToken, RefreshToken 발급

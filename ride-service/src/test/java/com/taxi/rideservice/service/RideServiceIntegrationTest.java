@@ -2,6 +2,7 @@ package com.taxi.rideservice.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taxi.common.core.dto.RideAcceptDto;
 import com.taxi.common.core.dto.UserDto;
 import com.taxi.common.core.exception.CustomBadRequestException;
 import com.taxi.rideservice.client.UserServiceClient;
@@ -151,7 +152,7 @@ public class RideServiceIntegrationTest {
         dto.setPassengerEmail("passenger@email.com");
         dto.setDriverEmail("driver@email.com");
 
-        RideInfoDto rideInfoDto = rideService.acceptCall(dto);
+        RideAcceptDto rideInfoDto = rideService.acceptCall(dto);
 
         assertNotNull(rideInfoDto);
         assertEquals(callRequestDto.getStartLocation(), rideInfoDto.getStartLocation());

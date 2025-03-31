@@ -34,7 +34,7 @@ public class AuthController {
         }
 
         String email = oAuth2User.getEmail();
-        User user = authService.getUser(email);
+        User user = authService.getUserByEmail(email);
         Role role = oAuth2User.getRole();
 
         // 회원가입이 안되어있는 회원이라면 회원가입을 위한 설정
@@ -88,9 +88,17 @@ public class AuthController {
     }
 
     // feign client user 정보 반환
-    @GetMapping("/{email}")
-    public UserDto findUserIdByEmail(@PathVariable("email") String email) {
-        User user = authService.getUser(email);
+    @GetMapping("/email/{email}")
+    public UserDto findUserByEmail(@PathVariable("email") String email) {
+        User user = authService.getUserByEmail(email);
+
+        return new UserDto(user.getId(), user.getName(), user.getPhoneNumber());
+    }
+
+    // feign client user 정보 반환
+    @GetMapping("/id/{id}")
+    public UserDto findUserById(@PathVariable("id") Long id) {
+        User user = authService.getUserById(id);
 
         return new UserDto(user.getId(), user.getName(), user.getPhoneNumber());
     }

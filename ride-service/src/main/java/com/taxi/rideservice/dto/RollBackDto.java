@@ -1,4 +1,4 @@
-package com.taxi.common.core.dto;
+package com.taxi.rideservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,10 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class RollBackDto {
 
-    private Long userId;
-    private String name;
-    private String phoneNumber;
-
+    private Long rideId;
+    private Long driverUserId;
 }

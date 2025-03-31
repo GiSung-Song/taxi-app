@@ -1,12 +1,11 @@
 package com.taxi.rideservice.kafka;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taxi.common.core.dto.RideAcceptDto;
 import com.taxi.rideservice.config.KafkaContainerConfig;
 import com.taxi.rideservice.config.TestContainerConfig;
 import com.taxi.rideservice.dto.RideCallRequestDto;
-import com.taxi.rideservice.dto.RideInfoDto;
 import com.taxi.rideservice.service.RideService;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -82,7 +81,7 @@ public class KafkaIntegrationTest {
         Consumer<String, String> consumer = consumerFactory.createConsumer();
         consumer.subscribe(Collections.singletonList("ride-accept"));
 
-        RideInfoDto rideInfoDto = new RideInfoDto();
+        RideAcceptDto rideInfoDto = new RideAcceptDto();
 
         rideInfoDto.setRideId(0L);
         rideInfoDto.setPassengerUserId(1L);
@@ -98,14 +97,13 @@ public class KafkaIntegrationTest {
         rideInfoDto.setCapacity(4);
         rideInfoDto.setTotalRides(50);
 
-        rideProducer.sendRideInfo(rideInfoDto);
+        rideProducer.sendRideAccept(rideInfoDto);
 
         ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(10));
 
         for (ConsumerRecord<String, String> record : records) {
-            RideInfoDto acceptDto = objectMapper.readValue(record.value(), RideInfoDto.class);
+            RideAcceptDto acceptDto = objectMapper.readValue(record.value(), RideAcceptDto.class);
             assertEquals(acceptDto.getStartLocation(), rideInfoDto.getStartLocation());
-            assertEquals(acceptDto.getPassengerName(), rideInfoDto.getPassengerName());
             assertEquals(acceptDto.getDriverName(), rideInfoDto.getDriverName());
         }
 
