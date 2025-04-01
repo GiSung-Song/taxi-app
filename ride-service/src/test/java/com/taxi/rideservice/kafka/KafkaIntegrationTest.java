@@ -2,10 +2,15 @@ package com.taxi.rideservice.kafka;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taxi.common.core.dto.DriveCompleteDto;
 import com.taxi.common.core.dto.RideAcceptDto;
+import com.taxi.common.core.dto.RideCancelDto;
+import com.taxi.common.core.dto.RideStartDto;
 import com.taxi.rideservice.config.KafkaContainerConfig;
 import com.taxi.rideservice.config.TestContainerConfig;
 import com.taxi.rideservice.dto.RideCallRequestDto;
+import com.taxi.rideservice.dto.RideCompleteDto;
+import com.taxi.rideservice.enums.RideStatus;
 import com.taxi.rideservice.service.RideService;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -21,6 +26,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -107,5 +113,82 @@ public class KafkaIntegrationTest {
             assertEquals(acceptDto.getDriverName(), rideInfoDto.getDriverName());
         }
 
+    }
+
+    @Test
+    void 호출취소_producer_test() throws JsonProcessingException {
+        Consumer<String, String> consumer = consumerFactory.createConsumer();
+        consumer.subscribe(Collections.singletonList("ride-cancel"));
+
+        RideCancelDto rideCancelDto = new RideCancelDto();
+
+        rideCancelDto.setRideId(1L);
+        rideCancelDto.setRideStatus(RideStatus.CANCEL.name());
+        rideCancelDto.setDriverUserId(1L);
+        rideCancelDto.setCancelTime(LocalDateTime.now());
+
+        rideProducer.sendRideCancel(rideCancelDto);
+
+        ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(10));
+
+        for (ConsumerRecord<String, String> record : records) {
+            RideCancelDto readValue = objectMapper.readValue(record.value(), RideCancelDto.class);
+            assertEquals(rideCancelDto.getRideId(), readValue.getRideId());
+            assertEquals(rideCancelDto.getRideStatus(), readValue.getRideStatus());
+        }
+    }
+
+    @Test
+    void 운행시작_producer_test() throws JsonProcessingException {
+        Consumer<String, String> consumer = consumerFactory.createConsumer();
+        consumer.subscribe(Collections.singletonList("ride-start"));
+
+        RideStartDto rideStartDto = new RideStartDto();
+
+        rideStartDto.setRideId(1L);
+        rideStartDto.setRideStatus(RideStatus.DRIVING.name());
+        rideStartDto.setCarName("CAR NAME");
+        rideStartDto.setStartLocation("start");
+        rideStartDto.setEndLocation("end");
+
+        rideProducer.sendRideStart(rideStartDto);
+
+        ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(10));
+
+        for (ConsumerRecord<String, String> record : records) {
+            RideStartDto readValue = objectMapper.readValue(record.value(), RideStartDto.class);
+            assertEquals(rideStartDto.getRideId(), readValue.getRideId());
+            assertEquals(rideStartDto.getRideStatus(), readValue.getRideStatus());
+            assertEquals(rideStartDto.getStartLocation(), readValue.getStartLocation());
+            assertEquals(rideStartDto.getEndLocation(), readValue.getEndLocation());
+        }
+    }
+
+    @Test
+    void 운행종료_producer_test() throws JsonProcessingException {
+        Consumer<String, String> consumer = consumerFactory.createConsumer();
+        consumer.subscribe(Collections.singletonList("ride-complete"));
+
+        DriveCompleteDto driveCompleteDto = new DriveCompleteDto();
+
+        driveCompleteDto.setRideId(1L);
+        driveCompleteDto.setRideStatus(RideStatus.DRIVING.name());
+        driveCompleteDto.setCarName("CAR NAME");
+        driveCompleteDto.setStartLocation("start");
+        driveCompleteDto.setEndLocation("end");
+        driveCompleteDto.setFare(50000);
+
+        rideProducer.sendRideComplete(driveCompleteDto);
+
+        ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(10));
+
+        for (ConsumerRecord<String, String> record : records) {
+            DriveCompleteDto readValue = objectMapper.readValue(record.value(), DriveCompleteDto.class);
+            assertEquals(driveCompleteDto.getRideId(), readValue.getRideId());
+            assertEquals(driveCompleteDto.getRideStatus(), readValue.getRideStatus());
+            assertEquals(driveCompleteDto.getStartLocation(), readValue.getStartLocation());
+            assertEquals(driveCompleteDto.getEndLocation(), readValue.getEndLocation());
+            assertEquals(driveCompleteDto.getFare(), readValue.getFare());
+        }
     }
 }

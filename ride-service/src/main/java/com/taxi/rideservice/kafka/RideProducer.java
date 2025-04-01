@@ -2,12 +2,12 @@ package com.taxi.rideservice.kafka;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taxi.common.core.dto.DriveCompleteDto;
 import com.taxi.common.core.dto.RideAcceptDto;
 import com.taxi.common.core.dto.RideCancelDto;
 import com.taxi.common.core.dto.RideStartDto;
 import com.taxi.common.core.exception.CustomInternalException;
 import com.taxi.rideservice.dto.RideCallRequestDto;
-import com.taxi.rideservice.dto.RideCompleteDto;
 import com.taxi.rideservice.dto.RollBackDto;
 import com.taxi.rideservice.service.RideService;
 import lombok.RequiredArgsConstructor;
@@ -87,7 +87,7 @@ public class RideProducer {
     }
 
     // 택시 운행 종료 producer
-    public void sendRideComplete(RideCompleteDto dto) {
+    public void sendRideComplete(DriveCompleteDto dto) {
         try {
             String info = objectMapper.writeValueAsString(dto);
             kafkaTemplate.send("ride-complete", info);

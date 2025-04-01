@@ -1,5 +1,9 @@
 package com.taxi.rideservice.controller;
 
+import com.taxi.common.core.dto.DriveCompleteDto;
+import com.taxi.common.core.dto.RideAcceptDto;
+import com.taxi.common.core.dto.RideCancelDto;
+import com.taxi.common.core.dto.RideStartDto;
 import com.taxi.common.core.response.CustomResponse;
 import com.taxi.common.core.response.ResponseCode;
 import com.taxi.rideservice.dto.*;
@@ -36,7 +40,7 @@ public class RideController {
 
     @PostMapping("/accept")
     public ResponseEntity<CustomResponse<?>> acceptCall(@RequestBody @Valid CallAcceptRequestDto dto) {
-        RideInfoDto rideInfoDto = rideService.acceptCall(dto);
+        RideAcceptDto rideInfoDto = rideService.acceptCall(dto);
         rideProducer.sendRideAccept(rideInfoDto);
 
         return ResponseEntity.ok(CustomResponse.success(null, ResponseCode.SUCCESS));
@@ -44,21 +48,24 @@ public class RideController {
 
     @PostMapping("/cancel/{rideId}")
     public ResponseEntity<CustomResponse<?>> cancelCall(@PathVariable Long rideId) {
-        rideService.cancelRide(rideId);
+        RideCancelDto rideCancelDto = rideService.cancelRide(rideId);
+        rideProducer.sendRideCancel(rideCancelDto);
 
         return ResponseEntity.ok(CustomResponse.success(null, ResponseCode.SUCCESS));
     }
 
     @PostMapping("/start/{rideId}")
     public ResponseEntity<CustomResponse<?>> startRide(@PathVariable Long rideId) {
-        rideService.startRide(rideId);
+        RideStartDto rideStartDto = rideService.startRide(rideId);
+        rideProducer.sendRideStart(rideStartDto);
 
         return ResponseEntity.ok(CustomResponse.success(null, ResponseCode.SUCCESS));
     }
 
     @PostMapping("/complete")
     public ResponseEntity<CustomResponse<?>> completeRide(@RequestBody @Valid RideCompleteDto dto) {
-        rideService.completeRide(dto);
+        DriveCompleteDto driveCompleteDto = rideService.completeRide(dto);
+        rideProducer.sendRideComplete(driveCompleteDto);
 
         return ResponseEntity.ok(CustomResponse.success(null, ResponseCode.SUCCESS));
     }

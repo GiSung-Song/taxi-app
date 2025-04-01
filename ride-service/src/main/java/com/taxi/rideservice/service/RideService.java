@@ -312,7 +312,7 @@ public class RideService {
 
     // 운행 종료 메서드 실패 시 강제 종료
     // kafka 보상 메서드
-    public void rollBackCompleteRide(RideCompleteDto rideCompleteDto) {
+    public void rollBackCompleteRide(DriveCompleteDto rideCompleteDto) {
         Ride ride = getRide(rideCompleteDto.getRideId());
         Driver driver = getDriver(ride.getDriverId());
 

@@ -2,8 +2,12 @@ package com.taxi.rideservice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taxi.common.core.dto.DriveCompleteDto;
 import com.taxi.common.core.dto.RideAcceptDto;
+import com.taxi.common.core.dto.RideCancelDto;
+import com.taxi.common.core.dto.RideStartDto;
 import com.taxi.rideservice.dto.*;
+import com.taxi.rideservice.enums.RideStatus;
 import com.taxi.rideservice.kafka.RideProducer;
 import com.taxi.rideservice.service.RideService;
 import org.junit.jupiter.api.Test;
@@ -16,6 +20,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -158,7 +163,15 @@ class RideControllerTest {
 
     @Test
     void 택시_호출_취소_테스트() throws Exception {
-        willDoNothing().given(rideService).cancelRide(any());
+        RideCancelDto dto = new RideCancelDto();
+
+        dto.setDriverUserId(1L);
+        dto.setRideStatus(RideStatus.CANCEL.name());
+        dto.setRideId(1L);
+        dto.setCancelTime(LocalDateTime.now());
+
+        given(rideService.cancelRide(any())).willReturn(dto);
+        willDoNothing().given(rideProducer).sendRideCancel(any());
 
         mockMvc.perform(post("/api/ride/cancel/{rideId}", 1L))
                 .andDo(print())
@@ -167,7 +180,9 @@ class RideControllerTest {
 
     @Test
     void 택시_시작_테스트() throws Exception {
-        willDoNothing().given(rideService).startRide(any());
+        RideStartDto dto = new RideStartDto();
+        given(rideService.startRide(any())).willReturn(dto);
+        willDoNothing().given(rideProducer).sendRideStart(any());
 
         mockMvc.perform(post("/api/ride/start/{rideId}", 1L))
                 .andDo(print())
@@ -181,7 +196,10 @@ class RideControllerTest {
         dto.setRideId(5L);
         dto.setFare(50000);
 
-        willDoNothing().given(rideService).completeRide(dto);
+        DriveCompleteDto rideCompleteDto = new DriveCompleteDto();
+
+        given(rideService.completeRide(dto)).willReturn(rideCompleteDto);
+        willDoNothing().given(rideProducer).sendRideComplete(any());
 
         mockMvc.perform(post("/api/ride/complete")
                         .content(new ObjectMapper().writeValueAsString(dto))

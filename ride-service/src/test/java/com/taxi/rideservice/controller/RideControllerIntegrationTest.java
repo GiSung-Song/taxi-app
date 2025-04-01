@@ -1,8 +1,7 @@
 package com.taxi.rideservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.taxi.common.core.dto.RideAcceptDto;
-import com.taxi.common.core.dto.UserDto;
+import com.taxi.common.core.dto.*;
 import com.taxi.rideservice.client.UserServiceClient;
 import com.taxi.rideservice.config.KafkaContainerConfig;
 import com.taxi.rideservice.config.TestContainerConfig;
@@ -282,12 +281,29 @@ public class RideControllerIntegrationTest {
 
         rideRepository.save(ride);
 
+        UserDto driverDto = new UserDto();
+
+        driverDto.setUserId(1L);
+        driverDto.setName("driver");
+        driverDto.setPhoneNumber("01056785678");
+
+        given(userServiceClient.getUserInfoById(1L)).willReturn(driverDto);
+
         mockMvc.perform(post("/api/ride/cancel/{rideId}", ride.getId()))
                 .andExpect(status().isOk())
                 .andDo(print());
 
         assertEquals(RideStatus.CANCEL, ride.getRideStatus());
         assertEquals(DriverStatus.WAITING, driver.getDriverStatus());
+
+        Consumer<String, String> consumer = consumerFactory.createConsumer();
+        consumer.subscribe(Collections.singletonList("ride-cancel"));
+        ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(10));
+
+        for (ConsumerRecord<String, String> record : records) {
+            RideCancelDto cancelDto = objectMapper.readValue(record.value(), RideCancelDto.class);
+            assertEquals(RideStatus.CANCEL.name(), cancelDto.getRideStatus());
+        }
     }
 
     @Test
@@ -320,12 +336,35 @@ public class RideControllerIntegrationTest {
 
         rideRepository.save(ride);
 
+        UserDto passengerDto = new UserDto();
+        UserDto driverDto = new UserDto();
+
+        passengerDto.setUserId(2L);
+        passengerDto.setName("passenger");
+        passengerDto.setPhoneNumber("01012341234");
+
+        driverDto.setUserId(1L);
+        driverDto.setName("driver");
+        driverDto.setPhoneNumber("01056785678");
+
+        given(userServiceClient.getUserInfoById(2L)).willReturn(passengerDto);
+        given(userServiceClient.getUserInfoById(1L)).willReturn(driverDto);
+
         mockMvc.perform(post("/api/ride/start/{rideId}", ride.getId()))
                 .andExpect(status().isOk())
                 .andDo(print());
 
         assertEquals(RideStatus.DRIVING, ride.getRideStatus());
         assertEquals(DriverStatus.DRIVING, driver.getDriverStatus());
+
+        Consumer<String, String> consumer = consumerFactory.createConsumer();
+        consumer.subscribe(Collections.singletonList("ride-start"));
+        ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(10));
+
+        for (ConsumerRecord<String, String> record : records) {
+            RideStartDto rideStartDto = objectMapper.readValue(record.value(), RideStartDto.class);
+            assertEquals(RideStatus.DRIVING.name(), rideStartDto.getRideStatus());
+        }
     }
 
     @Test
@@ -358,6 +397,20 @@ public class RideControllerIntegrationTest {
 
         rideRepository.save(ride);
 
+        UserDto passengerDto = new UserDto();
+        UserDto driverDto = new UserDto();
+
+        passengerDto.setUserId(2L);
+        passengerDto.setName("passenger");
+        passengerDto.setPhoneNumber("01012341234");
+
+        driverDto.setUserId(1L);
+        driverDto.setName("driver");
+        driverDto.setPhoneNumber("01056785678");
+
+        given(userServiceClient.getUserInfoById(2L)).willReturn(passengerDto);
+        given(userServiceClient.getUserInfoById(1L)).willReturn(driverDto);
+
         RideCompleteDto dto = new RideCompleteDto();
         dto.setRideId(ride.getId());
         dto.setFare(50000);
@@ -371,5 +424,15 @@ public class RideControllerIntegrationTest {
         assertEquals(RideStatus.COMPLETE, ride.getRideStatus());
         assertEquals(DriverStatus.WAITING, driver.getDriverStatus());
         assertEquals(50000, ride.getFare());
+
+        Consumer<String, String> consumer = consumerFactory.createConsumer();
+        consumer.subscribe(Collections.singletonList("ride-complete"));
+        ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(10));
+
+        for (ConsumerRecord<String, String> record : records) {
+            DriveCompleteDto driveCompleteDto = objectMapper.readValue(record.value(), DriveCompleteDto.class);
+            assertEquals(RideStatus.COMPLETE.name(), driveCompleteDto.getRideStatus());
+            assertEquals(50000, driveCompleteDto.getFare());
+        }
     }
 }
