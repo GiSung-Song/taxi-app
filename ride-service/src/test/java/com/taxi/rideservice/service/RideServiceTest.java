@@ -170,8 +170,8 @@ class RideServiceTest {
         RideCallRequestDto callDto =
                 new RideCallRequestDto("user@email.com", 50.0, 49.0, "여기 어딘가", 100.0, 87.5, "저기 어딘가");
 
-        UserDto userDto = new UserDto(0L, "승객", "01012341234");
-        UserDto driverDto = new UserDto(1L, "기사", "01056785678");
+        UserDto userDto = new UserDto(0L, "승객", "01012341234", "user@email.com");
+        UserDto driverDto = new UserDto(1L, "기사", "01056785678", "driver@email.com");
 
         Driver driver = Driver.builder()
                 .userId(0L)
@@ -201,8 +201,8 @@ class RideServiceTest {
         RideCallRequestDto callDto =
                 new RideCallRequestDto("user@email.com", 50.0, 49.0, "여기 어딘가", 100.0, 87.5, "저기 어딘가");
 
-        UserDto userDto = new UserDto(0L, "승객", "01012341234");
-        UserDto driverDto = new UserDto(1L, "기사", "01056785678");
+        UserDto userDto = new UserDto(0L, "승객", "01012341234", "user@email.com");
+        UserDto driverDto = new UserDto(1L, "기사", "01056785678", "driver@email.com");
 
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(redisTemplate.opsForValue().get(anyString())).thenReturn(jsonData);
@@ -222,8 +222,8 @@ class RideServiceTest {
         RideCallRequestDto callDto =
                 new RideCallRequestDto("user@email.com", 50.0, 49.0, "여기 어딘가", 100.0, 87.5, "저기 어딘가");
 
-        UserDto userDto = new UserDto(0L, "승객", "01012341234");
-        UserDto driverDto = new UserDto(1L, "기사", "01056785678");
+        UserDto userDto = new UserDto(0L, "승객", "01012341234", "user@email.com");
+        UserDto driverDto = new UserDto(1L, "기사", "01056785678", "driver@email.com");
 
         Driver driver = Driver.builder()
                 .userId(0L)

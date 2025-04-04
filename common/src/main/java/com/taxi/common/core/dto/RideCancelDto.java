@@ -14,8 +14,11 @@ import java.time.LocalDateTime;
 public class RideCancelDto {
 
     private Long rideId;
+    private Long passengerUserId;
     private Long driverUserId;
     private LocalDateTime cancelTime; // 호출 취소 시간
     private String rideStatus;        // 운행 상태
+    private String passengerEmail;
+    private String driverEmail;
 
 }

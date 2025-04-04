@@ -161,6 +161,9 @@ public class RideService {
             rideAcceptDto.setRideStatus(RideStatus.ACCEPT.name());
             rideAcceptDto.setAcceptTime(ride.getCreatedAt());
 
+            rideAcceptDto.setPassengerEmail(passengerInfo.getEmail());
+            rideAcceptDto.setDriverEmail(driverInfo.getEmail());
+
             return rideAcceptDto;
         } catch (CustomBadRequestException e) {
             throw e;
@@ -189,15 +192,19 @@ public class RideService {
         // 운행 대기상태로 변경
         driver.updateDriverStatus(DriverStatus.WAITING);
 
+        UserDto passengerInfo = userServiceClient.getUserInfoById(ride.getPassengerId());
         UserDto driverInfo = userServiceClient.getUserInfoById(driver.getUserId());
 
         // dto 설정
         RideCancelDto rideCancelDto = new RideCancelDto();
 
+        rideCancelDto.setPassengerUserId(ride.getPassengerId());
         rideCancelDto.setDriverUserId(driverInfo.getUserId());
         rideCancelDto.setRideId(rideId);
         rideCancelDto.setCancelTime(ride.getUpdatedAt());
         rideCancelDto.setRideStatus(RideStatus.CANCEL.name());
+        rideCancelDto.setDriverEmail(driverInfo.getEmail());
+        rideCancelDto.setPassengerEmail(passengerInfo.getEmail());
 
         return rideCancelDto;
     }
@@ -225,8 +232,10 @@ public class RideService {
 
         rideStartDto.setRideId(rideId);
 
+        rideStartDto.setPassengerUserId(ride.getPassengerId());
         rideStartDto.setPassengerPhoneNumber(passengerInfo.getPhoneNumber());
 
+        rideStartDto.setDriverUserId(driver.getUserId());
         rideStartDto.setDriverName(driverInfo.getName());
         rideStartDto.setDriverPhoneNumber(driverInfo.getPhoneNumber());
         rideStartDto.setCarName(driver.getCarName());
@@ -236,6 +245,9 @@ public class RideService {
         rideStartDto.setEndLocation(ride.getEndLocation());
         rideStartDto.setRideStatus(RideStatus.DRIVING.name());
         rideStartDto.setStartTime(ride.getUpdatedAt());
+
+        rideStartDto.setPassengerEmail(passengerInfo.getEmail());
+        rideStartDto.setDriverEmail(driverInfo.getEmail());
 
         return rideStartDto;
     }
@@ -264,8 +276,10 @@ public class RideService {
 
         driveCompleteDto.setRideId(ride.getId());
 
+        driveCompleteDto.setPassengerUserId(passengerInfo.getUserId());
         driveCompleteDto.setPassengerPhoneNumber(passengerInfo.getPhoneNumber());
 
+        driveCompleteDto.setDriverUserId(driver.getUserId());
         driveCompleteDto.setDriverName(driverInfo.getName());
         driveCompleteDto.setDriverPhoneNumber(driver.getPhoneNumber());
         driveCompleteDto.setCarName(driver.getCarName());
@@ -276,6 +290,9 @@ public class RideService {
         driveCompleteDto.setEndLocation(ride.getEndLocation());
         driveCompleteDto.setRideStatus(RideStatus.COMPLETE.name());
         driveCompleteDto.setCompleteTime(ride.getUpdatedAt());
+
+        driveCompleteDto.setPassengerEmail(passengerInfo.getEmail());
+        driveCompleteDto.setDriverEmail(driverInfo.getEmail());
 
         return driveCompleteDto;
     }

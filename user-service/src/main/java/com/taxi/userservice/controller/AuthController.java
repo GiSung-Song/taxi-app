@@ -92,7 +92,7 @@ public class AuthController {
     public UserDto findUserByEmail(@PathVariable("email") String email) {
         User user = authService.getUserByEmail(email);
 
-        return new UserDto(user.getId(), user.getName(), user.getPhoneNumber());
+        return new UserDto(user.getId(), user.getName(), user.getPhoneNumber(), user.getEmail());
     }
 
     // feign client user 정보 반환
@@ -100,6 +100,6 @@ public class AuthController {
     public UserDto findUserById(@PathVariable("id") Long id) {
         User user = authService.getUserById(id);
 
-        return new UserDto(user.getId(), user.getName(), user.getPhoneNumber());
+        return new UserDto(user.getId(), user.getName(), user.getPhoneNumber(), user.getEmail());
     }
 }

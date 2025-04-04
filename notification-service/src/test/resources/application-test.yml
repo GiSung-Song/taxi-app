@@ -1,0 +1,21 @@
+spring:
+  kafka:
+    bootstrap-servers: {spring.kafka.bootstrap-servers}
+    consumer:
+      group-id: test-group
+      auto-offset-reset: earliest
+      properties:
+        spring.json.trusted.packages: "*"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    listener:
+      ack-mode: manual_immediate
+
+jwt:
+  secretKey: fdsa89fdsa7f789ewq879fsadsa98ds69af68y94e2fgh89q1
+  access:
+    expiration: 600000 # 만료시간 10분
+
+  refresh:
+    expiration: 1200000 # 만료시간 20분

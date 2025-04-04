@@ -70,7 +70,7 @@ class DriverServiceTest {
                 .userId(1L)
                 .build();
 
-        UserDto userDto = new UserDto(1L, "기사", "01012341234");
+        UserDto userDto = new UserDto(1L, "기사", "01012341234", "driver@email.com");
 
         DriverUpdateDto dto =
                 new DriverUpdateDto("test@email.com", "123나4567", 10, "카니발", "12903047382", "01012341234");
@@ -87,7 +87,7 @@ class DriverServiceTest {
 
     @Test
     void 기사_정보_수정_실패() {
-        UserDto userDto = new UserDto(1L, "기사", "01012341234");
+        UserDto userDto = new UserDto(1L, "기사", "01012341234", "driver@email.com");
 
         DriverUpdateDto dto =
                 new DriverUpdateDto("test@email.com", "123나4567", 10, "카니발", "12903047382", "01012341234");
@@ -110,7 +110,7 @@ class DriverServiceTest {
                 .driverStatus(DriverStatus.OFFLINE)
                 .build();
 
-        UserDto userDto = new UserDto(1L, "기사", "01012341234");
+        UserDto userDto = new UserDto(1L, "기사", "01012341234", "driver@email.com");
         DriverStatusUpdateDto dto = new DriverStatusUpdateDto("email@test.com", "WAITING");
 
         when(userServiceClient.getUserInfoByEmail(anyString())).thenReturn(userDto);
@@ -123,7 +123,7 @@ class DriverServiceTest {
 
     @Test
     void 기사_운행_상태_수정_실패() {
-        UserDto userDto = new UserDto(1L, "기사", "01012341234");
+        UserDto userDto = new UserDto(1L, "기사", "01012341234", "driver@email.com");
         DriverStatusUpdateDto dto = new DriverStatusUpdateDto("email@test.com", "WAITING");
 
         when(userServiceClient.getUserInfoByEmail(anyString())).thenReturn(userDto);
