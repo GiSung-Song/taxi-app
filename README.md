@@ -3,14 +3,13 @@
 - Backend : java 17, Spring Boot 3.3.2
 - MSA : Spring Cloud (Eureka, Config, Gateway)
 - Database : MySQL, Redis
-- Messaging : Kafka (알림 서비스 예정)
-- Security : Spring Security, OAuth2, JWT
-
+- Messaging : Kafka(서비스 간 이벤트 전달), WebSocket STOMP
+- Security : Spring Security, JWT, OAuth2(소셜 로그인 구성만 완료, 추후 테스트 예정)
 
 
 ## 프로젝트 흐름
 1. **회원 가입**
-   - OAuth2, 자체 회원 가입 (승객, 기사)
+   - OAuth2(Google, Kakao, Naver 구성만 완료), 자체 회원 가입 (승객, 기사)
 
 2. **기사 추가 정보 등록**
    - 차량 정보, 면허 등
@@ -25,8 +24,8 @@
 5. **호출 수락 및 운행정보**
    - 호출 수락 시 운행에 대한 정보 저장 (MySQL)
    - 호출 수락, 취소, 완료 처리
-   - 승객과 기사에게 필요 내용 알림 (kafka, 'notification-service' 예정)
-
+   - kafka를 통해 메시지 전송(ride-service) -> notification-service에서 이벤트 수신
+   - notification-service에서 WebSocket(STOMP)로 실시간 메시지 전송
 
 
 ## 모듈별 역할
@@ -34,6 +33,33 @@
 - config-server : Spring Cloud Config를 이용한 설정 관리
 - eureka-server : 서비스 디스커버리 (Eureka)
 - gateway : API Gateway (Spring Cloud Gateway), JWT 인증 필터 포함
-- notification-service : 알림 서비스 (kafka 기반) - 예정
+- notification-service : Kafka 기반 이벤트 처리 및 WebSocket(STOMP)로 실시간 메시지 전송
 - ride-service : 택시 호출 및 운행 관리 서비스
 - user-service : 회원 서비스 (회원가입, 로그인 등)
+
+
+## 주요 API
+### 회원가입 및 인증
+| 메서드   | 경로 | 설명      |
+|-------|------|---------|
+| `POST` | `/api/user/register` | 일반 회원가입 |
+| `POST` | `/api/auth/login` | 일반 로그인  |
+| `POST` | `/api/auth/logout` | 로그아웃    |
+| `POST` | `/api/auth/refresh` | 토큰 재발급 |
+
+### 기사 정보
+| 메서드     | 경로                     | 설명       |
+|---------|------------------------|----------|
+| `POST`  | `/api/driver/register` | 기사 정보 등록 |
+| `PATCH` | `/api/driver/info`     | 기사 정보 수정 |
+| `PATCH` | `/api/driver/status`   | 상태 변경    |
+
+### 호출 및 운행
+| 메서드   | 경로                            | 설명           |
+|-------|-------------------------------|--------------|
+| `POST` | `/api/ride/call`              | 택시 호출        |
+| `POST` | `/api/ride/find`              | 호출 목록 조회(기사) |
+| `POST` | `/api/ride/accept`            | 호출 수락        |
+| `POST` | `/api/ride/cancel/{rideId}` | 호출 취소        |
+| `POST` | `/api/ride/start/{rideId}` | 운행 시작        |
+| `POST` | `/api/ride/complete` | 운행 종료        |

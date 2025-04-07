@@ -19,3 +19,8 @@ jwt:
 
   refresh:
     expiration: 1200000 # 만료시간 20분
+
+logging:
+  level:
+    org.springframework.web.socket: DEBUG
+    org.springframework.messaging: DEBUG

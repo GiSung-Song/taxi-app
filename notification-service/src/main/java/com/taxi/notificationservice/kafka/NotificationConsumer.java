@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ public class NotificationConsumer {
 
     private final ObjectMapper objectMapper;
     private final SimpMessagingTemplate messagingTemplate;
+    private final SimpUserRegistry simpUserRegistry;
 
     @KafkaListener(topics = "ride-accept", groupId = "taxi-consumer-group")
     public void consumeRideAccept(String message) {
@@ -31,6 +33,10 @@ public class NotificationConsumer {
             log.info("Received Message : {}", message);
 
             RideAcceptDto rideAcceptDto = objectMapper.readValue(message, RideAcceptDto.class);
+
+            simpUserRegistry.getUsers().forEach(user -> {
+                System.out.println("user.getName() = " + user.getName());
+            });
 
             // 승객 데이터(기사 정보, 출발지, 도착지 등) 승객에게 전송
             PassengerAcceptDto passengerAcceptDto = RideAcceptMapper.toPassengerAcceptDto(rideAcceptDto);

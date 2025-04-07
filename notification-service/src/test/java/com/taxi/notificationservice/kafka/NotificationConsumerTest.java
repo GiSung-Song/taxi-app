@@ -23,14 +23,12 @@ import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.socket.WebSocketHttpHeaders;
+import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
-import org.springframework.web.socket.sockjs.client.SockJsClient;
-import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -74,8 +72,8 @@ class NotificationConsumerTest {
         passengerToken = "Bearer " + jwtTokenUtil.generateAccessToken(passengerEmail, "USER");
         driverToken    = "Bearer " + jwtTokenUtil.generateAccessToken(driverEmail, "DRIVER");
 
-        SockJsClient sockJsClient = new SockJsClient(List.of(new WebSocketTransport(new StandardWebSocketClient())));
-        stompClient = new WebSocketStompClient(sockJsClient);
+        WebSocketClient webSocketClient = new StandardWebSocketClient();
+        stompClient = new WebSocketStompClient(webSocketClient);
         stompClient.setMessageConverter(new StringMessageConverter());
 
         connectUser(passengerToken, passengerMessages);
@@ -85,11 +83,11 @@ class NotificationConsumerTest {
     private void connectUser(String token, BlockingQueue<String> messageQueue) throws Exception {
         String url = "ws://localhost:" + port + "/ws";
 
-        WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
-        headers.add(HttpHeaders.AUTHORIZATION, token);
+        StompHeaders headers = new StompHeaders();
+        headers.add("Authorization", token);
 
         StompSessionHandlerAdapter handlerAdapter = new StompSessionHandlerAdapter() { };
-        StompSession session = stompClient.connectAsync(url, headers, handlerAdapter).get(3, TimeUnit.SECONDS);
+        StompSession session = stompClient.connectAsync(url, new WebSocketHttpHeaders(), headers, handlerAdapter).get(3, TimeUnit.SECONDS);
 
         session.subscribe("/user/queue/notification", new StompFrameHandler() {
             @Override
