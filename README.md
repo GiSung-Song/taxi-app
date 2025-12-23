@@ -1,4 +1,4 @@
-# MSA 기반 택시 호출 Backend 프로젝트
+# 택시 호출 서비스 (MSA 구조 학습용 프로젝트)
 ## 기술 스택
 - Backend : java 17, Spring Boot 3.3.2
 - MSA : Spring Cloud (Eureka, Config, Gateway)
