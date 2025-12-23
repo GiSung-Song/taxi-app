@@ -4,6 +4,8 @@
 서비스 분리 및 서비스 간 통신 등을 직접 적용하며,
 MSA 구조가 갖는 장점과 복잡도를 모두 경험하는 것을 목표로 했습니다.
 
+---
+
 ## 기술 스택
 - Backend : java 17, Spring Boot 3.3.2
 - MSA : Spring Cloud (Eureka, Config, Gateway)
